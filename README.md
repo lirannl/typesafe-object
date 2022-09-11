@@ -1,4 +1,4 @@
-# Typesafe object
+# Typesafe object [![Node.js Package](https://github.com/lirannl/typesafe-object/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/lirannl/typesafe-object/actions/workflows/npm-publish.yml)
 A typescript package allowing for safe nested property access within objects. Also comes with arithmetic types (add, subtract) that were needed to support tuples.
 
 This package includes:
