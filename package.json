@@ -2,6 +2,7 @@
   "name": "typesafe-object",
   "version": "1.0.0",
   "description": "A typesafe object library",
+  "type": "module",
   "main": "index.ts",
   "scripts": {
     "test": "tsc --noEmit"
@@ -9,6 +10,6 @@
   "author": "Liran Piade",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "4.1"
+    "typescript": "^4.1"
   }
 }
