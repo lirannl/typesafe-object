@@ -1,5 +1,5 @@
 {
-  "name": "typesafe-object",
+  "name": "typesafe-object-paths",
   "version": "1.0.0",
   "description": "A typesafe object library",
   "type": "module",
