@@ -4,7 +4,7 @@
   "description": "A typesafe object library",
   "main": "index.ts",
   "scripts": {
-    "test": "tsc"
+    "test": "tsc --noEmit"
   },
   "author": "Liran Piade",
   "license": "ISC",
