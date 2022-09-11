@@ -14,6 +14,14 @@ const c: NestedKeyOf<ExampleType> = "a.0" // Error
 ```
 
 ## PathOf
+Given a nested path, returns the type of the object at that path
+```ts
+const g: PathOf<ExampleType, "b.0"> = 0; // Error
+const g: PathOf<ExampleType, "b.0"> = "hello"; // Okay
+const g: PathOf<ExampleType, "a"> = "hello"; // Error
+```
+
+## Get
 A nested path getter - given an object and a path, will yield the type of the object and the given path
 ```ts
 const obj = {a: {b: {c: "d"}}, e: ["f", "g"], h: ["i"]}
