@@ -5,23 +5,21 @@ type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
 type _NestedKeyOf<T, TupleI extends number = 0> =
     // Empty tuples have no members
     T extends [] ? never :
-    // Tuple handling
     T extends [infer Head, ...infer Tail] ?
-    `${TupleI}` | _NestedKeyOf<Tail, Add<TupleI, 1>> |
-    // Object Tuple handling
-    (Head extends object ? `${TupleI}.${_NestedKeyOf<Head>}` : never)
-    :
-    // Array handling
+    // Tuple handling    
+    Head extends object ?
+    // Object tuple handling
+    `${TupleI}` | `${TupleI}.${Exclude<_NestedKeyOf<Head>, symbol>}` |
+    _NestedKeyOf<Tail, Add<TupleI, 1>> :
+    // Primitive tuple handling
+    `${TupleI}` | _NestedKeyOf<Tail, Add<TupleI, 1>> :
     T extends (infer M)[] ?
-    `${number}` |
+    // Array handling
+    M extends object ?
     // Object array handling
-    (M extends object ? `${number}.${Exclude<_NestedKeyOf<M>, symbol>}` : never)
-    :
-    // Record handling
-    string extends keyof T ? `${string}` |
-    // Record object handling
-    (T[string] extends object ? `${string}.${_NestedKeyOf<T[string]>}` : never)
-    :
+    `${number}` | `${number}.${Exclude<_NestedKeyOf<M>, symbol>}` :
+    // Primitive array handling
+    `${number}` :
     // Non-array handling
     { [K in keyof T]: T[K] extends object ? Exclude<K, symbol> |
         `${Exclude<K, symbol>}.${_NestedKeyOf<T[K]>}` : Exclude<K, symbol> }[keyof T];

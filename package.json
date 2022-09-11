@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "A typesafe object library",
   "type": "module",
-  "main": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "tsc --noEmit"
+    "test": "tsc --noEmit",
+    "build": "tsc"
   },
   "author": "Liran Piade",
   "license": "ISC",
