@@ -17,7 +17,7 @@ const c: NestedKeyOf<ExampleType> = "a.0" // Error
 A nested path getter - given an object and a path, will yield the type of the object and the given path
 ```ts
 const obj = {a: {b: {c: "d"}}, e: ["f", "g"], h: ["i"]}
-get()
+get(obj, "e.0") // "f"
 ```
 
 The package requires at least typescript 4.1.

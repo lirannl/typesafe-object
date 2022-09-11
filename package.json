@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A typesafe object library",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lirannl/typesafe-object"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

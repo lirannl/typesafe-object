@@ -12,6 +12,11 @@ function _get(obj: object, path: string | number): any {
         return obj[head as keyof object];
     return _get(obj[head as keyof object], tail.join("."));
 }
+/**
+ * A typesafe object getter, reading a path
+ * @param obj The object to read from
+ * @param path A path to a value within {@link obj}
+ */
 export function get<T extends object, P extends NestedKeyOf<T>>(obj: T, path: P): PathOf<T, P> {
     return _get(obj, path);
 }

@@ -24,6 +24,9 @@ type _NestedKeyOf<T, TupleI extends number = 0> =
     { [K in keyof T]: T[K] extends object ? Exclude<K, symbol> |
         `${Exclude<K, symbol>}.${_NestedKeyOf<T[K]>}` : Exclude<K, symbol> }[keyof T];
 
+/**
+ * Given an object with type {@link T}, returns a union of all paths to a value within {@link T}
+ */
 export type NestedKeyOf<T extends object> = _NestedKeyOf<DeepWriteable<T>>;
 
 type _PathOf<Object, Path extends string | number> =
@@ -35,4 +38,7 @@ type _PathOf<Object, Path extends string | number> =
     Path extends `${number}` ? Object[Path extends keyof Object ? Path : never] :
     Path extends keyof Object ? Object[Path] : never;
 
+/**
+ * Given an object with type {@link T}, and a path with type {@link P}, returns the type of the value at {@link P} within {@link T}
+ */
 export type PathOf<T extends object, P extends NestedKeyOf<T>> = _PathOf<T, P>;
