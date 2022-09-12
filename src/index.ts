@@ -3,14 +3,15 @@ import { NestedKeyOf, PathOf } from "./nested";
 
 export { NestedKeyOf, PathOf, Add, Subtract };
 
-function _get(obj: object, path: string | number): any {
+function _get(obj: object | undefined, path: string | number): any {
     if (path === "") {
         return obj;
     }
-    const [head, ...tail] = `${path}`.split(".");
+    const [head, ...tail] = `${path}`.split(".") as [keyof object, ...string[]];
+    const safeObj = obj ?? {};
     if (tail.length === 0)
-        return obj[head as keyof object];
-    return _get(obj[head as keyof object], tail.join("."));
+        return safeObj[head];
+    return _get(safeObj[head], tail.join("."));
 }
 /**
  * A typesafe object getter, reading a path
