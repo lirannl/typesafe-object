@@ -1,7 +1,7 @@
 import { Add, Subtract } from "./arithmetic";
-import { NestedKeyOf, RemoveCirularReferences } from "./nested";
+import { NestedKeyOf, PathOf, RemoveCirularReferences } from "./nested";
 
-export { NestedKeyOf, Add, Subtract, RemoveCirularReferences };
+export { NestedKeyOf, PathOf, Add, Subtract, RemoveCirularReferences };
 
 function _get(obj: object | undefined, path: string | number): any {
     if (path === "") {
@@ -18,7 +18,7 @@ function _get(obj: object | undefined, path: string | number): any {
  * @param obj The object to read from
  * @param path A path to a value within {@link obj}
  */
-export function get<T extends object, P extends string | number>(obj: T, path: P)//<T extends object, P extends NestedKeyOf<T>>(obj: T, path: P): PathOf<T, P> 
+export function get<T extends object, P extends NestedKeyOf<T>>(obj: T, path: P): PathOf<T, P> 
 {
     return _get(obj, path);
 }

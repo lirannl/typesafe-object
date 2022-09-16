@@ -1,6 +1,6 @@
 {
   "name": "typesafe-object-paths",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "A typesafe object library",
   "type": "module",
   "repository": {
@@ -16,6 +16,6 @@
   "author": "Liran Piade",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^4.1"
+    "typescript": "^4.7"
   }
 }
