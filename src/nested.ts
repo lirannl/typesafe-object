@@ -1,9 +1,29 @@
 import { Add } from "./arithmetic";
 
-type OptionalPropAccessor<T, K extends keyof Exclude<T, undefined>> = T extends undefined ?
-    Exclude<T, undefined>[K] | undefined : Exclude<T, undefined>[K];
+type _OmitByValue<O, V> = V extends infer Head | V ?
+    never extends Head ? { [K in keyof O as V extends O[K] ? never : K]: O[K] } :
+    { [K in keyof O as Head extends O[K] ? never : K]: O[K] } | _OmitByValue<O, Exclude<V, Head>> :
+    never;
 
-type DeepReqiuredWriteable<T> = { -readonly [P in keyof T]-?: DeepReqiuredWriteable<NonNullable<T[P]>> };
+/**
+ * Omit properties from an object whose value is in the given blacklist union
+ */
+type OmitByValue<O, Blacklist> = keyof _OmitByValue<O, Blacklist> extends never ? Record<string, never> : { [Key in keyof _OmitByValue<O, Blacklist>]: _OmitByValue<O, Blacklist>[Key] };
+
+/**
+ * Removes any keys containing any of the types that have already been entered
+ */
+export type RemoveCirularReferences<T, Blacklist = T> =
+    T extends [] ? T :
+    T extends (infer M)[] ?
+    (M extends object ? RemoveCirularReferences<Exclude<M, Blacklist>, Blacklist> : Exclude<M, Blacklist>)[] :
+    // Object handling
+    T extends object ?
+    { [K in keyof OmitByValue<T, T>]: RemoveCirularReferences<OmitByValue<T, T>[K], OmitByValue<T, T>[K] | Blacklist> } :
+    // Only objects can have circular references - therefore we can just return primitives as-is
+    T;
+
+type DeepReqiuredWriteable<T> = { -readonly [P in keyof T]-?: DeepReqiuredWriteable<RemoveCirularReferences<NonNullable<T[P]>>> };
 
 type _NestedKeyOf<T, TupleI extends number = 0> =
     // Empty tuples have no members
@@ -27,12 +47,15 @@ type _NestedKeyOf<T, TupleI extends number = 0> =
     { [K in keyof T]: T[K] extends object ? Exclude<K, symbol> |
         `${Exclude<K, symbol>}.${_NestedKeyOf<T[K]>}` : Exclude<K, symbol> }[keyof T];
 
+type OptionalPropAccessor<T, K extends keyof Exclude<T, undefined>> = T extends undefined ?
+    Exclude<T, undefined>[K] | undefined : Exclude<T, undefined>[K];
+
 /**
  * Given an object with type {@link T}, returns a union of all paths to a value within {@link T}
  */
 export type NestedKeyOf<T extends object> = _NestedKeyOf<DeepReqiuredWriteable<DeepReqiuredWriteable<T>>>;
 
-type _PathOf<Object, Path extends string | number> =
+type _PathOf<Object, Path extends string | number> = never/*
     Path extends `${infer Head}.${infer Tail}` ?
     Head extends `${number}` ?
     // Array handling
@@ -40,12 +63,14 @@ type _PathOf<Object, Path extends string | number> =
     Head extends keyof Exclude<Object, undefined> ?
     _PathOf<OptionalPropAccessor<Object, Head>, Tail>
     : never :
-    Path extends `${number}` ? OptionalPropAccessor<Object,Path extends keyof Object ? Path : never> :
+    Path extends `${number}` ? OptionalPropAccessor<Object, Path extends keyof Object ? Path : never> :
     Path extends keyof Exclude<Object, undefined> ?
     OptionalPropAccessor<Object, Path>
-    : never;
+    : never;*/
 
 /**
  * Given an object with type {@link T}, and a path with type {@link P}, returns the type of the value at {@link P} within {@link T}
  */
-export type PathOf<T extends object, P extends NestedKeyOf<T>> = _PathOf<T, P>;
+export type PathOf<T, P> = never//<T extends object, P extends NestedKeyOf<T>> = _PathOf<T, P>;
+
+type Schloop = {a: string, b: string, s: Schloop}
