@@ -1,7 +1,7 @@
 import { Add, Subtract } from "./arithmetic";
-import { NestedKeyOf, PathOf, RemoveCirularReferences } from "./nested";
+import { NestedKeyOf, RemoveCirularReferences } from "./nested";
 
-export { NestedKeyOf, PathOf, Add, Subtract, RemoveCirularReferences };
+export { NestedKeyOf, Add, Subtract, RemoveCirularReferences };
 
 function _get(obj: object | undefined, path: string | number): any {
     if (path === "") {

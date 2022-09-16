@@ -54,23 +54,3 @@ type OptionalPropAccessor<T, K extends keyof Exclude<T, undefined>> = T extends 
  * Given an object with type {@link T}, returns a union of all paths to a value within {@link T}
  */
 export type NestedKeyOf<T extends object> = _NestedKeyOf<DeepReqiuredWriteable<DeepReqiuredWriteable<T>>>;
-
-type _PathOf<Object, Path extends string | number> = never/*
-    Path extends `${infer Head}.${infer Tail}` ?
-    Head extends `${number}` ?
-    // Array handling
-    _PathOf<OptionalPropAccessor<Object, Head extends keyof Exclude<Object, undefined> ? Head : never>, Tail> :
-    Head extends keyof Exclude<Object, undefined> ?
-    _PathOf<OptionalPropAccessor<Object, Head>, Tail>
-    : never :
-    Path extends `${number}` ? OptionalPropAccessor<Object, Path extends keyof Object ? Path : never> :
-    Path extends keyof Exclude<Object, undefined> ?
-    OptionalPropAccessor<Object, Path>
-    : never;*/
-
-/**
- * Given an object with type {@link T}, and a path with type {@link P}, returns the type of the value at {@link P} within {@link T}
- */
-export type PathOf<T, P> = never//<T extends object, P extends NestedKeyOf<T>> = _PathOf<T, P>;
-
-type Schloop = {a: string, b: string, s: Schloop}
