@@ -1,4 +1,4 @@
-import { Add } from "./arithmetic";
+import { Add, Subtract } from "./arithmetic";
 
 type _OmitByValue<O, V> = V extends infer Head | V ?
     never extends Head ? { [K in keyof O as V extends O[K] ? never : K]: O[K] } :
@@ -25,35 +25,34 @@ export type RemoveCirularReferences<T, Blacklist = T> =
 
 type DeepReqiuredWriteable<T> = { -readonly [P in keyof T]-?: DeepReqiuredWriteable<RemoveCirularReferences<NonNullable<T[P]>>> };
 
-type _NestedKeyOf<T, TupleI extends number = 0> =
-    // Empty tuples have no members
-    T extends [] ? never :
-    T extends [infer Head, ...infer Tail] ?
-    // Tuple handling    
-    Head extends object ?
-    // Object tuple handling
-    `${TupleI}` | `${TupleI}.${Exclude<_NestedKeyOf<Head>, symbol>}` |
-    _NestedKeyOf<Tail, Add<TupleI, 1>> :
-    // Primitive tuple handling
-    `${TupleI}` | _NestedKeyOf<Tail, Add<TupleI, 1>> :
-    T extends (infer M)[] ?
-    // Array handling
-    M extends object ?
-    // Object array handling
-    `${number}` | `${number}.${Exclude<_NestedKeyOf<M>, symbol>}` :
-    // Primitive array handling
-    `${number}` :
-    // Non-array handling
-    { [K in keyof T]: T[K] extends object ? Exclude<K, symbol> |
-        `${Exclude<K, symbol>}.${_NestedKeyOf<T[K]>}` : Exclude<K, symbol> }[keyof T];
+type KeyofArr<Arr extends [...unknown[]], I extends number = 1> = Arr extends [] ? never :
+    Arr extends [unknown, ...infer Rest] ?
+    0 | Subtract<I, 1> | KeyofArr<Rest, Add<I, 1>> : number;
 
-type OptionalPropAccessor<T, K extends keyof Exclude<T, undefined>> = T extends undefined ?
-    Exclude<T, undefined>[K] | undefined : Exclude<T, undefined>[K];
+type KeyOf<T> = T extends object ?
+    T extends Array<unknown> ? KeyofArr<T> :
+    keyof T & string :
+    never;
+
+type MaybeSubtract<N extends number | undefined, Amount extends number> = N extends undefined ? undefined : Subtract<Exclude<N, undefined>, Amount>;
+
+type _NestedKeyOf<T extends Record<string, unknown> | unknown[],
+    MaxDepth extends number | undefined, Blacklist = never> =
+    MaxDepth extends 0 ? KeyOf<T> :
+    T extends Blacklist ? never :
+    { [K in KeyOf<T>]: K |
+        // @ts-ignore
+        `${K}.${_NestedKeyOf<T[K], MaybeSubtract<MaxDepth, 1>>}`
+    }[KeyOf<T>];
 
 /**
  * Given an object with type {@link T}, returns a union of all paths to a value within {@link T}
  */
-export type NestedKeyOf<T extends object> = _NestedKeyOf<DeepReqiuredWriteable<DeepReqiuredWriteable<T>>>;
+export type NestedKeyOf<T extends Record<string, unknown> | unknown[],
+    MaxDepth extends number | undefined = undefined> = _NestedKeyOf<DeepReqiuredWriteable<T>, MaxDepth>;
+
+type OptionalPropAccessor<T, K extends keyof Exclude<T, undefined>> = T extends undefined ?
+    Exclude<T, undefined>[K] | undefined : Exclude<T, undefined>[K];
 
 type _PathOf<Object, Path extends string | number> =
     Path extends `${infer Key}.${infer Rest}` ?
@@ -63,4 +62,4 @@ type _PathOf<Object, Path extends string | number> =
 /**
  * Given an object with type {@link T}, and a path with type {@link P}, returns the type of the value at {@link P} within {@link T}
  */
-export type PathOf<T extends object, P extends NestedKeyOf<T>> = _PathOf<T, P>;
+export type PathOf<T extends Record<string, unknown> | unknown[], P extends NestedKeyOf<T>> = _PathOf<T, P>;
