@@ -16,6 +16,6 @@
   "author": "Liran Piade",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^4.7"
+    "typescript": "4.7"
   }
 }
